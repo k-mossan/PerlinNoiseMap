@@ -129,17 +129,18 @@ public class PerlinNoiseTextureExample : MonoBehaviour
         //高さによって色を段階的に変更
         Color color = Color.black;//岩盤っぽい色
 
+        int yy = 0xFF - (int)y * 0x10;
         if (y > _maxHeight * 0.3f)
         {
-            ColorUtility.TryParseHtmlString("#019540FF", out color);//草っぽい色
+            ColorUtility.TryParseHtmlString("#009040" + yy.ToString("x2"), out color);//草っぽい色
         }
         else if (y > _maxHeight * 0.2f)
         {
-            ColorUtility.TryParseHtmlString("#2432ADFF", out color);//水っぽい色
+            ColorUtility.TryParseHtmlString("#2030A0" + yy.ToString("x2"), out color);//水っぽい色
         }
         else if (y > _maxHeight * 0.1f)
         {
-            ColorUtility.TryParseHtmlString("#D4500EFF", out color);//マグマっぽい色
+            ColorUtility.TryParseHtmlString("#D05000" + yy.ToString("x2"), out color);//マグマっぽい色
         }
 
         cube.GetComponent<MeshRenderer>().material.color = color;
@@ -147,11 +148,13 @@ public class PerlinNoiseTextureExample : MonoBehaviour
 
     private Texture2D CreateTexture()
     {
-        Texture2D tex = new Texture2D((int)_width, (int)_depth);
+        Texture2D tex = new Texture2D((int)_width, (int)_depth, TextureFormat.RGBA32, true);
         for (int x = 0; x < _cubes.GetLength(0); ++x)
         {
             for (int z = 0; z < _cubes.GetLength(1); ++z)
             {
+                Color color = _cubes[x, z].material.color;
+                color.a = (255.0f - _cubes[x, z].transform.localPosition.y) / 255.0f;
                 tex.SetPixel(x, z, _cubes[x, z].material.color);
             }
         }
